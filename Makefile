@@ -18,7 +18,7 @@ sb_clean:
 sb_build:
 	game-service/mvnw package --file game-service/pom.xml
 sb_run:
-	game-service/mvnw spring-boot:run --file game-service/pom.xml
+	game-service/mvnw clean spring-boot:run --file game-service/pom.xml
 sb_debug:
 	game-service/mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000" --file game-service/pom.xml
 

@@ -1,4 +1,4 @@
-= https://github.com/CWACoderWithAttitude/dc-spring-boot-mvp[Spring Boot MVP DevContainer]
+= https://github.com/CWACoderWithAttitude/dc-spring-boot-jwt[Spring Boot MVP DevContainer]
 Volker Benders
 :toc:
 :toc-title: Table of Contents
@@ -12,11 +12,12 @@ Volker Benders
 :revdate: 2025-06-04
 
 == TL;DR
-DevContainer for Spring Boot & Postgres that gets you started with building production grade REST services that use postgres for persistence.
+DevContainer for Spring Boot & Postgres & JWT Support.
 
-> This is a stripped down version of https://github.com/CWACoderWithAttitude/dc-spring-boot-all-in-one[dc-spring-boot-all-in-one] which is a full blown devcontainer for building REST APIs with Spring Boot. It includes a lot of additional features like monitoring, testing, and more.
+> This based on the https://github.com/CWACoderWithAttitude/dc-spring-boot-mvp[dc-spring-boot-mvp] project
 
 == What's inside?
+An implementation inspired by https://medium.com/@victoronu/implementing-jwt-authentication-in-a-simple-spring-boot-application-with-java-b3135dbdb17b[Implementing JWT Authentication in a Simple Spring Boot Application with Java].
 This is an opinionated devcontainer for building REST APIs with Spring Boot. Setup ships with postgres persistence.
 It is not meant to be a complete solution for all use cases. It rather get you started.
 If you have any suggestions or feedback, please let me know.
@@ -46,11 +47,11 @@ To assist your journey of building high quality web services:
 - Mavens JaCoCo plugin generates code coverage reports each time run `./mvnw package`.
 The report is stored in `target/site/jacoco/index.html`. (Use the included https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer[Live server] extension to view the report in your browser.)
 
-image::https://github.com/CWACoderWithAttitude/dc-spring-boot-mvp/blob/main/images/games-jacoco-report.png[]
+image::https://github.com/CWACoderWithAttitude/dc-spring-boot-jwt/blob/main/images/games-jacoco-report.png[]
 
 
 - Basic build pipeline based on GitHub Actions is included. It runs the tests, builds the app and generates the JaCoCo report.
-The JaCoCo-Report is published to the https://cwacoderwithattitude.github.io/dc-spring-boot-mvp/[project website]
+The JaCoCo-Report is published to the https://cwacoderwithattitude.github.io/dc-spring-boot-jwt/[project website]
 
 ==== Architecture Diagram
 
@@ -59,7 +60,7 @@ A picture is worth a thousand words. So let's have a look at the architecture di
 [source,mermaid]
 ....
 flowchart TD
-    subgraph DevContainer: dc-spring-boot-mvp
+    subgraph DevContainer: dc-spring-boot-jwt
         direction TB
         VSCode[VS Code<br/>]
         GamesService[games-service<br/>Java 21, Maven]

@@ -1,0 +1,19 @@
+meta {
+  name: POST - Register new User
+  type: http
+  seq: 14
+}
+
+post {
+  url: http://localhost:8088/api/auth/signup
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {"username":"testuser2","password":"testpass"}
+}
