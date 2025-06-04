@@ -1,0 +1,19 @@
+meta {
+  name: GET - Get all games - authenticated
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8088/games/
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{user_token}}
+}
+
+assert {
+  res.status: eq 200
+}
