@@ -1,0 +1,52 @@
+services:
+  games-service:
+    image: mcr.microsoft.com/devcontainers/java:21
+    hostname: games-service.local
+    volumes:
+      -  ..:/src:cached
+      -  $HOME/.m2:/home/vscode/.m2:cached
+    working_dir: /src 
+    ports:
+      - "${app_port}:8080"
+      - "${app_debug_port}:8000"
+    depends_on:
+      - db
+    command: >
+      bash -c "sleep infinity"
+    networks:
+      game-service-net:
+
+  adminer:
+    image: adminer:5.0.4
+    restart: always
+    ports:
+      - ${adminer_port}:8080
+    depends_on:
+      - db
+    networks:
+      game-service-net:
+
+
+      
+  db:
+    image: postgres:17.5-alpine3.22
+    hostname: db.local
+    restart: always
+    environment:
+      - POSTGRES_USER=${db_user} #postgres
+      - POSTGRES_PASSWORD=${db_password} #postgres
+      - POSTGRES_DB=${db_name} #fritzbox
+    ports:
+      - "${db_port}:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      game-service-net:
+  
+
+networks:
+  game-service-net:
+
+volumes:
+  pg_data: 
+    driver: local

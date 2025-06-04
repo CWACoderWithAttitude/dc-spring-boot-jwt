@@ -1,0 +1,228 @@
+= https://github.com/CWACoderWithAttitude/dc-spring-boot-mvp[Spring Boot MVP DevContainer]
+Volker Benders
+:toc:
+:toc-title: Table of Contents
+:source-highlighter: rouge
+:docinfo: shared
+:imagesdir: ./images
+
+:description: Spring Boot DevContainer with postgres.
+:keywords: devcontainer, spring boot, rest api, testing, persistence, postgres
+:revnumber: 0.1.0
+:revdate: 2025-06-04
+
+== TL;DR
+DevContainer for Spring Boot & Postgres that gets you started with building production grade REST services that use postgres for persistence.
+
+> This is a stripped down version of https://github.com/CWACoderWithAttitude/dc-spring-boot-all-in-one[dc-spring-boot-all-in-one] which is a full blown devcontainer for building REST APIs with Spring Boot. It includes a lot of additional features like monitoring, testing, and more.
+
+== What's inside?
+This is an opinionated devcontainer for building REST APIs with Spring Boot. Setup ships with postgres persistence.
+It is not meant to be a complete solution for all use cases. It rather get you started.
+If you have any suggestions or feedback, please let me know.
+
+Let's have a look at the main components:
+
+* OpenJDK 21 
+* Spring Boot 3.5.0
+* Maven 3.9.9
+* Postgres DB 14.1
+* Adminer
+* JaCoCo
+* Bruno
+
+== Components
+
+=== Spring Boot - OpenJDK 21
+Develop your Spring Boot 3.5 Service on OpenJDK 21. 
+
+For illustration I added an example REST-Service that manages data on games. 
+This service exposes some technical metrics: JVM, Hibernate, Spring-Booot (Requests, Errors, etc.) and application specific metrics like the number of games in the database. 
+
+To assist your journey of building high quality web services:
+
+- Swagger / Open-API info is exposed on http://localhost:8088/swagger-ui/index.html[/swagger-ui/index.html].
+
+- Mavens JaCoCo plugin generates code coverage reports each time run `./mvnw package`.
+The report is stored in `target/site/jacoco/index.html`. (Use the included https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer[Live server] extension to view the report in your browser.)
+
+image::https://github.com/CWACoderWithAttitude/dc-spring-boot-mvp/blob/main/images/games-jacoco-report.png[]
+
+
+- Basic build pipeline based on GitHub Actions is included. It runs the tests, builds the app and generates the JaCoCo report.
+The JaCoCo-Report is published to the https://cwacoderwithattitude.github.io/dc-spring-boot-mvp/[project website]
+
+==== Architecture Diagram
+
+A picture is worth a thousand words. So let's have a look at the architecture diagram of the devcontainer.
+
+[source,mermaid]
+....
+flowchart TD
+    subgraph DevContainer: dc-spring-boot-mvp
+        direction TB
+        VSCode[VS Code<br/>]
+        GamesService[games-service<br/>Java 21, Maven]
+        Workspace[src workspace folder]
+        User[vscode user]
+    end
+
+    VSCode -- connects to --> GamesService
+    GamesService -- mounts --> Workspace
+    GamesService -- runs as --> User
+    GamesService -- postStartCommand --> Make[sb_run ]
+    GamesService -- tools --> Node[Node.js, npm, eslint]
+    GamesService -- tools --> Maven[Maven ]
+....
+
+
+=== Testing
+
+I ship my examples with https://www.usebruno.com[Bruno] collections.
+
+Please find the ganes api collection in the `bruno` folder.
+
+You can import them into Bruno by clicking on the `+` icon in the top left corner and selecting `Import Collection`.
+
+There's a CLI tool to run collections, too:
+```
+❯ bru run . --reporter-html results.html
+Running Folder
+
+Create Game (200 ) - 71 ms
+   ✓ assert: res.status: eq 200
+   ✓ should return status 200 (OK)
+   ✓ id of the create game entity should be greater than 0
+Get all games (200 ) - 87 ms
+   ✓ assert: res.status: eq 200
+Get game by existing id (200 ) - 10 ms
+   ✓ assert: res.status: eq 200
+Get game by non-existing id (404 ) - 7 ms
+   ✓ assert: res.status: eq 404
+Update Game - existing id (200 ) - 16 ms
+Monitoring - Metrics (200 ) - 11 ms
+Monitoring - Info (200 ) - 2 ms
+Monitoring - Health (200 ) - 4 ms
+Delete Game by existing id (204 ) - 12 ms
+   ✓ assert: res.status: eq 204
+Delete Game by non existing id (404 ) - 9 ms
+   ✓ assert: res.status: eq 404
+Upload Games from JSON File (415 ) - 9 ms
+Update Game - non existing id (200 ) - 7 ms
+
+Requests:    12 passed, 12 total
+Tests:       2 passed, 2 total
+Assertions:  6 passed, 6 total
+Ran all requests - 245 ms
+
+Requests:    12 passed, 12 total
+Tests:       2 passed, 2 total
+Assertions:  6 passed, 6 total
+```
+
+image::images/bruno-cli-report.png[Bruno CLI Report]
+
+> I like Bruno - open source, local execution, no cloud services required. 
+Support for GUI and CLI. Excellent support for adding asserts and test to your requests.
+
+=== Persistence
+
+Is implemented by Postgres
+This setup ships with an empty database. Using Bruno you can easily create items or upload the a set of default games. By default the service default games are loaded from file:///./games-service/src/(resources/board-games.json[] on startup if the db is empty.
+
+
+=== Monitoring
+
+Never underestimate the importance of monitoring your app. It is crucial to know how your app is doing in production. The demo app exposes default Spring Boot Actuator endpoints. This includes metrics, health, info and more. Some technical spring boot metrics. GamesController shows how to expose custom metrics.
+
+For the sake of simplicity processing, rendering or gathering metrics is out of scope of this example.
+
+Please refer to the "all-in-one" version.
+
+=== DB Frontend
+
+Adminer is a web based DB management tool that can be used to manage your database. It can be reached at http://localhost:8010/?pgsql=db.local&username=postgres&db=postgres&ns=public&table=game[http://localhost:8010 > DB Adminer]. Please lookup the DB password fron file://.devcontainer/.env[.env] file.
+
+[%linenums,ruby,highlight=5..6]
+----
+include::.devcontainer/.env[]
+----
+
+
+=== Why DevContainer?
+
+When developing a REST API you need to think about a lot of things.
+
+You need to think about how to implement and test your code. And make sure it runs in a container.
+
+This is a lot of stuff to think about. So I thought it would be a good idea to build a full blown REST API that covers all these topics. The goal is to show you how to do all this stuff in a simple way. The goal is not to build the best API ever. 
+
+==== Works on my machine!
+
+We all "know"this is a bad slogan. But what if "works on my machine" simply means: great - ship it. What if we could turn "works on my machine" into "works in a container"? An envirnment that is consistent regardless of the host system.
+
+=== Why devcontainers?
+I want to show you why we should embrace the slogan "It works on my machine". Using devcontainers it is easy to build a product in an environment that's pretty close to your prod env.
+
+
+
+Let's face it - we all have different machines and different setups. When using containers starting from day one you can be suree 
+
+== Project Links
+
+[cols="5,1"]  
+|===
+| http://localhost:8088/swagger-ui/index.html[OpenAPI aka Swagger] ^| OK
+| http://localhost:8010/?pgsql=db.local&username=postgres&db=postgres&ns=public&table=game[Adminer > DB Web Admin Frontend] ^| OK
+|=== 
+
+== ToDos
+
+Topic here are listed in arbitrary order. They are not sorted by priority or anything else.
+- https://www.freecodecamp.org/news/how-to-run-github-actions-locally/s[Test Guhub Actions locally] w act
+- Integrate alerting into the setup. This will be done with 
+  * [ ] - [.line-through]#https://prometheus.io/docs/alerting/latest/alertmanager/[AlertManager]#  and 
+  * [ ] - https://grafana.com/docs/grafana/latest/alerting/notifications/[Grafana Alerting] and
+  * [ ] - [.line-through]#https://blog.devops.dev/send-email-alerts-using-prometheus-alert-manager-16df870144a4[Send email alerts using Prometheus Alert Manager]#
+- [x] - publish JaCoCo Report 
+- [ ] - Integrate Keycloak for authentication and authorization
+- [ ] - Run app on Firebase
+- [ ] - Deploy app on AWS using CDK and AWS Lambda
+- [ ] - Add Kong API Gateway
+- [ ] - Automate conversion of asciidoc 2 markdown. Makefile contains `generate_markdown: clean asciidoc2docbook docbook2md` to do exactly that. It should be added to the build pipeline to generate the markdown file automatically...
+- [ ] - addd appropriate icons to the architecture diagram
+- [ ] - fix test mocks for metrics and counters
+- [ ] - upgrade postgreso to a more recent version
+- [ ] - add more tests
+
+
+
+== Links
+=== DevOps
+- https://learn.microsoft.com/de-de/java/openjdk/containers[Container-Bilder für den Microsoft Build von OpenJDK  
+- https://www.baeldung.com/spring-rest-openapi-documentation[Spring REST OpenAPI Documentation]
+- https://www.baeldung.com/spring-boot-prometheus[Spring Boot Prometheus]
+- https://medium.com/@AlexanderObregon/how-spring-boot-maps-environment-variables-to-configuration-properties-2ddc55e361ca[How Spring Boot Maps Environment Variables to Configuration Properties]
+- https://medium.com/simform-engineering/testing-spring-boot-applications-best-practices-and-frameworks-6294e1068516[Testing Spring Boot Applications: Best Practices and Frameworks]
+- https://www.baeldung.com/spring-boot-mssql[Spring Boot with MS SQL]
+
+=== Writing
+
+Documenation is provided in Asciidoc format.
+
+> The Makefile in the root folder contains targets to convert asciidoc to markdown.
+
+- https://asciidoctor.org/docs/user-manual/[Asciidoctor User Manual]
+- https://docs.asciidoctor.org/diagram-extension/latest/diagrams/[Asciidoctor Diagram Extension]
+- https://gist.github.com/plamentotev/be495e81abd52dc10e7dd51fbb71dd8c/revisions[Asciidoctor Diagram - Ditaa, PlantUML, Graphviz, Mermaid, etc.]
+- https://docs.github.com/de/get-started/writing-on-github/working-with-advanced-formatting/creating-and-highlighting-code-blocks [Creating and highlighting code blocks]
+- https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams-with-mermaid[Creating diagrams with Mermaid]
+- https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams-with-plantuml[Creating diagrams with PlantUML]
+- https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams-with-ditaa[Creating diagrams with Ditaa]
+- https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams-with-graphviz[Creating diagrams with Graphviz]
+- https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams-with-asciidoctor-diagram[Creating diagrams with Asciidoctor Diagram]
+
+[ditaa]
+...
+
+...

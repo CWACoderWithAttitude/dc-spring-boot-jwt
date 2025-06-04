@@ -1,0 +1,45 @@
+{
+  "name": "dc-spring-boot-mvp",
+  "dockerComposeFile": [
+    "docker-compose.yml"
+  ],
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "files.eol": "\n",
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "git.rebaseWhenSync": true,
+        "remote.restoreForwardedPorts": false,
+        "remote.autoForwardPorts": false,
+        "typescript.preferences.quoteStyle": "single"
+      },
+      "extensions": [
+        "PKief.material-icon-theme",
+        "anweber.vscode-httpyac",
+        "asciidoctor.asciidoctor-vscode",
+        "GitHub.vscode-github-actions",
+        "ritwickdey.LiveServer",
+        "qwtel.sqlite-viewer",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.makefile-tools",
+        "GitHub.copilot-chat",
+        "cweijan.vscode-myssql-client2",
+        "redhat.vscode-xml"
+      ]
+    }
+  },
+  "service": "games-service",
+  "workspaceFolder": "/src/",
+  "remoteUser": "vscode",
+  "postCreateCommand": "",
+  "postStartCommand": "make sb_run",
+  "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/maven-sdkman:2": {
+      "jdkVersion": "21"
+    }
+  }
+}
