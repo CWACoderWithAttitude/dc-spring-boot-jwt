@@ -1,6 +1,7 @@
 package io.github.cwacoderwithattitude.games.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,8 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import io.github.cwacoderwithattitude.games.controller.GameController;
 import io.github.cwacoderwithattitude.games.service.CustomUserDetailsService;
+import jakarta.annotation.PostConstruct;
+import lombok.var;
 
 @Configuration
 public class WebSecurityConfig {
@@ -21,6 +23,15 @@ public class WebSecurityConfig {
     CustomUserDetailsService userDetailsService;
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
+    @Value("${jwt.publicEndpoints}")
+    private String publicEndpoints;
+
+    @PostConstruct
+    public void init() {
+        logger.info("> > > WebSecurityConfig initialized with public endpoints: " + publicEndpoints);
+    }
+
     java.util.logging.Logger logger = java.util.logging.Logger.getLogger(WebSecurityConfig.class.getName());
 
     @Bean
@@ -49,7 +60,7 @@ public class WebSecurityConfig {
                 .sessionManagement(
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/auth/**", "/api/test/all", "/swagger-ui/**", "/api-docs/**").permitAll() // Use
+                        .requestMatchers(publicEndpoints).permitAll() // Use
                         // 'requestMatchers'
                         // instead
                         // of 'antMatchers'
