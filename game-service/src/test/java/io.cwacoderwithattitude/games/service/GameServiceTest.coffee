@@ -2,11 +2,11 @@ import io.github.cwacoderwithattitude.games.model.Game;
 import io.github.cwacoderwithattitude.games.repo.GameRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.MockitoBean.MockitoBean;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.MockitoBean.MockitoBean.*;
 
 // Java
 package io.github.cwacoderwithattitude.games.service;
@@ -19,7 +19,7 @@ class GameServiceTest {
 
     @BeforeEach
     void setUp() {
-        gameRepository = Mockito.mock(GameRepository.class);
+        gameRepository = MockitoBean.mock(GameRepository.class);
         gameService = new GameService();
         // Use reflection to inject the mock since @Autowired is not processed in plain unit tests
         try {

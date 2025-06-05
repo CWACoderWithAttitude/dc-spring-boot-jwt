@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import io.github.cwacoderwithattitude.games.service.CustomUserDetailsService;
 import jakarta.annotation.PostConstruct;
-import lombok.var;
 
 @Configuration
 public class WebSecurityConfig {
